@@ -1,0 +1,84 @@
+services:
+  # Laravel Application (PHP-FPM)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: news_app
+    volumes:
+      - "C:/laragon/www/news-aggregator-app:/var/www/html"
+    networks:
+      - laravel
+
+  # Laravel Horizon (Queue Worker)
+  horizon:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_horizon
+    command: php artisan horizon
+    volumes:
+      - "C:/laragon/www/news-aggregator-app:/var/www/html"
+    depends_on:
+      - db
+      - app
+      - redis
+    networks:
+      - laravel
+
+  # Redis (for queues + Horizon dashboard)
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: always
+    networks:
+      - laravel
+
+  # PostgreSQL Database
+  db:
+    image: postgres:15
+    container_name: database
+    restart: always
+    environment:
+      POSTGRES_USER: news_user
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: news_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - laravel
+
+  # Optional: pgAdmin (GUI for Postgres)
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: database-GUI
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks:
+      - laravel
+
+  # Nginx Web Server
+  nginx:
+    image: nginx:alpine
+    container_name: server
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - laravel
+
+networks:
+  laravel:
+
+volumes:
+  pgdata:
