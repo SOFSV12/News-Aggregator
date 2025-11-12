@@ -7,6 +7,15 @@ services:
     container_name: news_app
     volumes:
       - "C:/laragon/www/news-aggregator-app:/var/www/html"
+    env_file:
+      - .env
+    environment:
+      - APP_ENV=${APP_ENV}
+      - APP_NAME=${APP_NAME}  
+      - THE_GUARDIAN_API_KEY=${THE_GUARDIAN_API_KEY}  
+      - NEWSAPI_ORG_API_KEY=${NEWSAPI_ORG_API_KEY}  
+      - NEWSAPI_AI_API_KEY=${NEWSAPI_AI_API_KEY}  
+      - THE_NEW_YORK_TIMES_API_KEY=${THE_NEW_YORK_TIMES_API_KEY}  
     networks:
       - laravel
 
