@@ -15,10 +15,17 @@ class Article extends Model
         'author',
         'category',
         'language',
-        'url',
+        'article_url',
         'image_url',
         'published_at',
         'fetched_at',
         'tags',
     ];
+
+    protected $casts = [
+    // 'tags' => 'array',
+    'published_at' => 'datetime',
+    'fetched_at' => 'datetime',
+    ];
+    
 }

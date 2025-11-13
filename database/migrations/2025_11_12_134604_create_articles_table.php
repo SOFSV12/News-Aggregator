@@ -18,14 +18,14 @@ return new class extends Migration
             $table->string('article_url')->unique();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->longText('content')->nullable();
+            $table->text('content')->nullable();
             $table->string('author')->nullable();
             $table->string('category')->nullable();
             $table->string('language')->nullable();
             $table->string('image_url')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamp('fetched_at')->nullable();
-            $table->json('tags')->nullable();
+            // $table->json('tags')->nullable();
             $table->timestamps();
 
             $table->index('title');
