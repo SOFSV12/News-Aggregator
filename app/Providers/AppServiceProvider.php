@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Repositories\ArticleRepository;
 use Illuminate\Support\ServiceProvider;
+use App\Services\Sources\NyTimesService;
+use App\Interfaces\SourceRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +14,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(SourceRepositoryInterface::class, ArticleRepository::class);
+        $this->app->bind(NyTimesService::class);
     }
 
     /**
