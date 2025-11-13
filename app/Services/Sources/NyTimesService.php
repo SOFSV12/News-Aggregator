@@ -36,6 +36,7 @@ class NyTimesService implements SourceInterface
         $data = $response->json();
         Log::info('NYTimesService fetched ' . count($data['results'] ?? []) . ' articles.');
 
+        //return articles in standardized format
         return array_map(fn ($item) => [
         'source_name'       => 'New York Times',
         'source_identifier' => 'nytimes',
