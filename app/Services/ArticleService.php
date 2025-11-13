@@ -34,7 +34,7 @@ class ArticleService
                     }
                 }
 
-                Log::info(get_class($source) . ' fetched ' . count($articles) . ' articles, saved ' . $savedCount . ' successfully.' . "  ". " neeeew");
+                Log::info(get_class($source) . ' fetched ' . count($articles) . ' articles, saved ' . $savedCount . ' successfully.');
             } catch (\Exception $e) {
                 Log::error('Failed fetching from ' . get_class($source) . ': ' . $e->getMessage());
             }
