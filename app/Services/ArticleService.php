@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Interfaces\SourceRepositoryInterface;
+use App\Services\Sources\GuardianService;
+use App\Services\Sources\NewsApiAiService;
+use App\Services\Sources\NewsApiOrgService;
 use App\Services\Sources\NyTimesService;
 use Illuminate\Support\Facades\Log;
 
@@ -13,11 +16,17 @@ class ArticleService
 
     public function __construct(
         SourceRepositoryInterface $repository,
-        NyTimesService $nyTimesService
+        NyTimesService $nyTimesService,
+        GuardianService $guardianService,
+        NewsApiAiService $newsApiAiService,
+        NewsApiOrgService $newsApiOrgService
     ) {
         $this->repository = $repository;
         $this->sources = [
-            $nyTimesService,
+            $nyTimesService,  
+            $guardianService, 
+            $newsApiOrgService, 
+            $newsApiAiService, 
         ];
     }
 
