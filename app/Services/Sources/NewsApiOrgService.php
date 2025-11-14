@@ -35,7 +35,7 @@ class NewsApiOrgService implements SourceInterface
         }
 
         $data = $response->json();
-        
+        Log::info('NewsAPIOrgService fetched ' . count($data['results'] ?? []) . ' articles.');
 
         //return articles in standardized format
         return array_map(fn ($item) => [

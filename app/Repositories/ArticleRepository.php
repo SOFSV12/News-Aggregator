@@ -35,7 +35,6 @@ class ArticleRepository implements SourceRepositoryInterface
                     'image_url' => $data['image_url'] ?? null,
                     'published_at' => $data['published_at'] ?? null,
                     'fetched_at' => $data['fetched_at'] ?? now(),
-                    // 'tags' => $data['tags'] ?? [],
                 ]
             );
 

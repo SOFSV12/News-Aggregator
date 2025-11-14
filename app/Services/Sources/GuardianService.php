@@ -33,7 +33,7 @@ class GuardianService implements SourceInterface
         }
 
         $data = $response->json();
-       
+        Log::info('GuardianService fetched ' . count($data['results'] ?? []) . ' articles.');
 
         //return articles in standardized format
         return array_map(fn ($item) => [
