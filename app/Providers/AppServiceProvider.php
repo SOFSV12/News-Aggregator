@@ -18,10 +18,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(SourceRepositoryInterface::class, ArticleRepository::class);
-        // $this->app->bind(NyTimesService::class);
-        // $this->app->bind(GuardianService::class);
+        $this->app->bind(NyTimesService::class);
+        $this->app->bind(GuardianService::class);
         $this->app->bind(NewsApiAiService::class);
-        // $this->app->bind(NewsApiOrgService::class);
+        $this->app->bind(NewsApiOrgService::class);
 
     }
 
