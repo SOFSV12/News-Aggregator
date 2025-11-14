@@ -32,5 +32,37 @@ class ArticleHelper
         return null;
     }
 
+
+    public static function extractAuthorsNeswApiAiService($authors): ?string
+    {
+        // Case 1: completely empty
+        if (empty($authors)) {
+            return null;
+        }
+
+        // Case 2: single object instead of array
+        if (is_array($authors) && isset($authors['name'])) {
+            return $authors['name'];
+        }
+
+        // Case 3: array of objects
+        if (is_array($authors) && isset($authors[0])) {
+            // Filter only items that have a name key
+            $names = array_filter(array_map(
+                fn ($a) => is_array($a) && isset($a['name']) ? $a['name'] : null,
+                $authors
+            ));
+
+            return !empty($names) ? implode(', ', $names) : null;
+        }
+
+        // Case 4: Unexpected string
+        if (is_string($authors)) {
+            return $authors;
+        }
+
+        return null;
+    }
+
     
 }
