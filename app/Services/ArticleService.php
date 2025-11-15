@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
-use App\Interfaces\SourceRepositoryInterface;
+use Illuminate\Support\Facades\Log;
+use App\Services\Sources\NyTimesService;
 use App\Services\Sources\GuardianService;
 use App\Services\Sources\NewsApiAiService;
 use App\Services\Sources\NewsApiOrgService;
-use App\Services\Sources\NyTimesService;
-use Illuminate\Support\Facades\Log;
+use App\Interfaces\SourceRepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ArticleService
 {
@@ -48,5 +49,16 @@ class ArticleService
                 Log::error('Failed fetching from ' . get_class($source) . ': ' . $e->getMessage());
             }
         }
+    }
+
+    public function getFilteredArticles(array $filters): LengthAwarePaginator
+    {
+        $perPage = $filters['limit'] ?? 20;
+        
+        // Remove limit from filters as it's handled separately
+        $searchFilters = $filters;
+        unset($searchFilters['limit']);
+
+        return $this->repository->getFilteredArticles($searchFilters, $perPage);
     }
 }
