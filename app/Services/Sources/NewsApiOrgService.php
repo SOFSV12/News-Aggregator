@@ -6,9 +6,12 @@ use Carbon\Carbon;
 use App\Interfaces\SourceInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use App\Traits\ArticleFormatterTrait;
 
 class NewsApiOrgService implements SourceInterface 
 {
+    use ArticleFormatterTrait;
+    
     protected string $baseUrl;
     protected string $apiKey;
 
@@ -35,23 +38,9 @@ class NewsApiOrgService implements SourceInterface
         }
 
         $data = $response->json();
-        Log::info('NewsAPIOrgService fetched ' . count($data['results'] ?? []) . ' articles.');
 
         //return articles in standardized format
-        return array_map(fn ($item) => [
-        'source_name'       => 'NewsApiOrg',
-        'source_identifier' => 'newsapi_org',
-        'article_url'       => $item['url'] ?? '',
-        'title'             => $item['title'] ?? '',
-        'description'       => $item['description'],
-        'content'           => $item['content'],
-        'author'            => $item['author'],
-        'category'          => null,
-        'language'          => null,
-        'image_url'         => $item['urlToImage'],
-        'published_at'      => $item['publishedAt'] ? Carbon::parse($item['publishedAt']) : null,
-        'fetched_at'        => now(),
-        ], $data['articles'] ?? []);
+        return $this->formatArticlesArray($data['articles'] ?? [], 'NewsApiOrg', 'newsapi_org');
     }
 
 }
