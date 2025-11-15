@@ -11,6 +11,31 @@ A Laravel-based News Aggregator application that fetches news articles from mult
 - Scheduler to fetch news periodically.
 - Nginx web server with Dockerized setup.
 
+## Example request 
+```
+## GET /articles
+
+Fetches news articles with filtering and pagination options.
+
+### Query Parameters
+
+| Parameter | Type | Constraints | Description |
+|-----------|------|-------------|-------------|
+| `search` | string | max:255 | Search in article content |
+| `category` | string | max:100 | Filter by category |
+| `source` | string | `nytimes`, `newsapi_ai`, `guardian`, `newsapi_org` | Filter by news source |
+| `date_from` | date | before_or_equal:date_to | Start date range |
+| `date_to` | date | after_or_equal:date_from | End date range |
+| `sort` | string | `asc`, `desc` | Sort order |
+| `limit` | integer | min:1, max:100 | Number of results (1-100) |
+| `author` | string | max:100 | Filter by author |
+
+### Validation Rules
+- Date range must be valid (`date_from` ≤ `date_to`)
+- Maximum 100 results per request
+- Sources limited to predefined values
+```
+
 ## Prerequisites
 
 - Docker Desktop
