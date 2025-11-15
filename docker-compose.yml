@@ -6,8 +6,7 @@ services:
       dockerfile: Dockerfile
     container_name: news_app
     volumes:
-      - "C:/laragon/www/news-aggregator-app:/var/www/html"
-      # - .:/var/www/html"
+      - .:/var/www/html
     env_file:
       - .env
     environment:
@@ -28,7 +27,7 @@ services:
     container_name: laravel_horizon
     command: php artisan horizon
     volumes:
-      - "C:/laragon/www/news-aggregator-app:/var/www/html"
+      - .:/var/www/html
     depends_on:
       - db
       - app

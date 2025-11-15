@@ -7,9 +7,12 @@ use App\Helpers\ArticleHelper;
 use App\Interfaces\SourceInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use App\Traits\ArticleFormatterTrait;
 
 class NewsApiAiService implements SourceInterface 
 {
+    use ArticleFormatterTrait;
+    
     protected string $baseUrl;
     protected string $apiKey;
 
@@ -46,23 +49,9 @@ class NewsApiAiService implements SourceInterface
         }
 
         $data = $response->json();
-        Log::info('NewsAPIAIService fetched ' . count($data['results'] ?? []) . ' articles.');
 
         //return articles in standardized format
-        return array_map(fn ($item) => [
-        'source_name'       => 'NewsApiAi',
-        'source_identifier' => 'newsapi_ai',
-        'article_url'       => $item['url'] ?? null,
-        'title'             => $item['title'] ?? null,
-        'description'       => $item['description'] ?? null,
-        'content'           => $item['body'] ?? null,
-        'author'            => ArticleHelper::extractAuthorsNeswApiAiService($item['authors'] ?? []),
-        'category'          => $item['category'] ?? null,
-        'language'          => $item['lang'] ?? null,
-        'image_url'         => $item['image'] ?? null,
-        'published_at'      => isset($item['dateTimePub']) ? Carbon::parse($item['dateTimePub']) : null,
-        'fetched_at'        => now(),
-        ], $data['articles']['results'] ?? []);
+        return $this->formatArticlesArray($data['articles']['results'] ?? [], 'NewsApiAi', 'newsapi_ai');
     }
 
 }
