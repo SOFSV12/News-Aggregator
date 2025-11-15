@@ -1,59 +1,159 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# News Aggregator Project
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel-based News Aggregator application that fetches news articles from multiple sources via their APIs, normalizes the data, and stores it in a PostgreSQL database. It supports background jobs and scheduling for periodic updates.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Fetches articles from multiple news sources (e.g., The Guardian, NewsAPI, NY Times, AI-generated news endpoints).
+- Normalizes API responses into a consistent format.
+- Stores articles in PostgreSQL.
+- Background processing using Laravel Horizon and Redis.
+- Scheduler to fetch news periodically.
+- Nginx web server with Dockerized setup.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Prerequisites
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Docker Desktop
+- git
+- postman for testing frontend endpoint
 
-## Learning Laravel
+## Getting Started
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 1. Clone the repository
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. Configure the .env file
 
-## Laravel Sponsors
+```bash
+cp .env.example .env
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+API Keys:
 
-### Premium Partners
+```
+THE_GUARDIAN_API_KEY=your_guardian_key
+NEWSAPI_ORG_API_KEY=your_newsapi_key
+NEWSAPI_AI_API_KEY=your_newsai_key
+THE_NEW_YORK_TIMES_API_KEY=your_nyt_key
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+https://developer.nytimes.com provides various uses of their endpoint i use Times Newswire API and my app i created works only with this enabled for my endpoint
+Times Wire API - Real-time feed of NYT article publishes
 
-## Contributing
+PostgreSQL settings:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```
+DB_CONNECTION=pgsql
+DB_HOST=db
+DB_PORT=5432
+DB_DATABASE=news_db
+DB_USERNAME=news_user
+DB_PASSWORD=secretpassword
+```
 
-## Code of Conduct
+Redis settings:
+```
+REDIS_HOST=redis
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 3. Important Volume Note
 
-## Security Vulnerabilities
+The project uses a Docker volume to map your local Laravel project into the container:
+```
+volumes:
+  - "C:/laragon/www/News-Aggregator:/var/www/html"
+  ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+⚠️ Make sure the path matches your actual local folder.
 
-## License
+Incorrect volume paths will prevent the project from running properly.
+Adjust the path according to your platform (Windows, Mac, Linux).
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 4. Start Docker containers
+```
+docker compose up -d --build
+```
+This starts:
+
+    app → Laravel PHP-FPM
+    db → PostgreSQL
+    redis → Redis server
+    horizon → Laravel Horizon
+    nginx → Web server
+    pgadmin → Optional PostgreSQL GUI
+
+#### 5. Install Composer dependencies (if vendor folder is missing)
+
+If you see artisan command not found or vendor/autoload.php missing:
+bash
+
+    docker compose exec app bash
+    composer install
+    cp .env.example .env
+    php artisan key:generate
+
+This will generate the vendor folder and Laravel application key.
+
+### 6. Run migrations
+
+
+    docker compose exec app bash
+    php artisan migrate
+
+
+### 7. Verify Redis extension
+
+    Ensure Redis is installed and enabled in PHP:
+    bash
+
+    docker compose exec app bash
+    php -m | grep redis
+
+    Output should return:
+    text
+
+    redis
+
+### 8. Access the application
+
+    Main Application: http://127.0.0.1:8080
+
+    Horizon dashboard (queues): http://127.0.0.1:8080/horizon
+
+    PG admin4: http://127.0.0.1:5050
+
+PGAdmin credentials:
+
+    Email: admin@admin.com
+
+    Password: admin
+
+Create a new server:
+
+    Input a name
+
+    Move to connection tab
+
+    Pass db as host (specified in docker-compose.yml)
+
+    Pass in the DB_USER and DB_PASSWORD (specified in your .env)
+
+    Click on save
+
+### 9. Starting Scheduler
+```
+docker compose exec app php artisan schedule:work
+```
+logs can be found in storage/logs, logs are set to run on daily 
+
+### 10. Stopping the project 
+```
+docker compose down
+```
+
+ 
+
+
+
+
