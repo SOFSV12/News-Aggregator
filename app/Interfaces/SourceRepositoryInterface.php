@@ -11,4 +11,5 @@ interface SourceRepositoryInterface
      * @return bool True on success, false on failure
      */
     public function saveArticle(array $data): bool;
+    public function getFilteredArticles(array $filters = [], int $limit = 20):  \Illuminate\Pagination\LengthAwarePaginator;
 }
