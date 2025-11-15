@@ -152,6 +152,16 @@ logs can be found in storage/logs, logs are set to run on daily
 docker compose down
 ```
 
+## Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| `artisan command not found` | Run `composer install`, copy `.env.example` to `.env`, and run `php artisan key:generate` inside the container. |
+| `vendor/autoload.php missing` | Ensure `composer install` is executed after mounting the volume. |
+| `Class "Redis" not found` | Check that Redis extension is installed in Docker (`pecl install redis && docker-php-ext-enable redis`). Verify with `php -m | grep redis`. |
+| Migration errors | Ensure `.env` DB settings match Docker Compose database container (`DB_HOST=db`). |
+| Docker volume issues (Windows) | Ensure your volume path matches your actual folder, e.g., `"C:/laragon/www/News-Aggregator:/var/www/html"`. |
+
  
 
 
